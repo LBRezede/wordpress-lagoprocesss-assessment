@@ -12,10 +12,12 @@ if (!defined('ABSPATH')) {
 
 const LAGO_PAGE_CACHE_TTL = 1800;
 
+// Store cached HTML outside theme/plugin folders so deployments stay clean.
 function lago_page_cache_dir(): string {
 	return WP_CONTENT_DIR . '/cache/lago-page-cache';
 }
 
+// Bypass cache for unsafe requests, authenticated sessions and dynamic WordPress contexts.
 function lago_page_cache_should_bypass(): bool {
 	if (is_admin() || wp_doing_ajax() || wp_is_json_request()) {
 		return true;
@@ -47,16 +49,19 @@ function lago_page_cache_should_bypass(): bool {
 	return false;
 }
 
+// Build a stable cache key from host and URI so each public URL gets its own file.
 function lago_page_cache_key(): string {
 	$host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? 'site'));
 	$uri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
 	return hash('sha256', $host . '|' . $uri) . '.html';
 }
 
+// Resolve the full cache file path for the current request.
 function lago_page_cache_file(): string {
 	return trailingslashit(lago_page_cache_dir()) . lago_page_cache_key();
 }
 
+// Send a simple response header for debugging HIT, MISS and BYPASS behavior.
 function lago_page_cache_send_headers(string $status): void {
 	if (headers_sent()) {
 		return;
@@ -66,6 +71,7 @@ function lago_page_cache_send_headers(string $status): void {
 	header('Cache-Control: public, max-age=300, stale-while-revalidate=1800');
 }
 
+// Serve a valid cached page before WordPress renders the template.
 function lago_page_cache_try_serve(): void {
 	if (lago_page_cache_should_bypass()) {
 		lago_page_cache_send_headers('BYPASS');
@@ -83,6 +89,7 @@ function lago_page_cache_try_serve(): void {
 	exit;
 }
 
+// Persist anonymous HTML responses atomically after WordPress finishes rendering.
 function lago_page_cache_store(string $html): string {
 	if (lago_page_cache_should_bypass() || $html === '' || http_response_code() >= 400) {
 		return $html;
@@ -100,6 +107,7 @@ function lago_page_cache_store(string $html): string {
 	return $html;
 }
 
+// Clear cached HTML when content or theme state changes.
 function lago_page_cache_flush(): void {
 	$dir = lago_page_cache_dir();
 	if (!is_dir($dir)) {
@@ -118,11 +126,13 @@ function lago_page_cache_flush(): void {
 	}
 }
 
+// Run the cache before normal template rendering and capture the generated HTML on misses.
 add_action('template_redirect', function (): void {
 	lago_page_cache_try_serve();
 	ob_start('lago_page_cache_store');
 }, -1000);
 
+// Invalidate the cache on common content lifecycle events.
 foreach (['save_post', 'deleted_post', 'trashed_post', 'clean_post_cache', 'switch_theme'] as $hook) {
 	add_action($hook, 'lago_page_cache_flush');
 }

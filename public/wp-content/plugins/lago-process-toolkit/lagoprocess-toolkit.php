@@ -14,9 +14,11 @@ if (!defined('ABSPATH')) {
 
 const LP_TOOLKIT_VERSION = '1.0.0';
 
+// Force the classic editor so reviewers can see a traditional WordPress editing workflow.
 add_filter('use_block_editor_for_post', '__return_false', 100);
 add_filter('use_block_editor_for_post_type', '__return_false', 100);
 
+// Central registry for the project custom post types shown under the Lago Portfolio admin menu.
 function lp_project_types(): array {
 	return [
 		'lp_delivery' => [
@@ -57,6 +59,7 @@ function lp_project_types(): array {
 	];
 }
 
+// Served brands are intentionally separated from project case studies.
 function lp_brand_type(): array {
 	return [
 		'lp_brand' => [
@@ -69,6 +72,7 @@ function lp_brand_type(): array {
 	];
 }
 
+// Register all portfolio content models with REST support, archives and dashboard icons.
 add_action('init', function (): void {
 	foreach (lp_project_types() as $post_type => $config) {
 		register_post_type($post_type, [
@@ -118,6 +122,7 @@ add_action('init', function (): void {
 	}
 }, 20);
 
+// Project fields mimic the ACF workflow without requiring ACF as a dependency.
 function lp_acf_like_fields(): array {
 	return [
 		'lp_project_summary' => ['label' => 'Project summary', 'type' => 'textarea'],
@@ -142,6 +147,7 @@ function lp_acf_like_fields(): array {
 	];
 }
 
+// Brand fields keep client/brand evidence editable from the WordPress admin.
 function lp_brand_fields(): array {
 	return [
 		'lp_brand_url'   => ['label' => 'Brand website', 'type' => 'url'],
@@ -150,6 +156,7 @@ function lp_brand_fields(): array {
 	];
 }
 
+// Homepage fields keep the public layout in the theme while letting copy stay editable in WordPress.
 function lp_home_fields(): array {
 	return [
 		'lp_home_hero_eyebrow' => ['label' => 'Hero eyebrow', 'type' => 'text'],
@@ -181,6 +188,7 @@ function lp_is_project_type(string $post_type): bool {
 	return array_key_exists($post_type, lp_project_types());
 }
 
+// Attach the custom field groups to project, brand and page editing screens.
 add_action('add_meta_boxes', function (): void {
 	foreach (array_keys(lp_project_types()) as $post_type) {
 		add_meta_box(
@@ -212,6 +220,7 @@ add_action('add_meta_boxes', function (): void {
 	);
 });
 
+// Render the project meta box used as an ACF-like field layer.
 function lp_render_project_fields_box(WP_Post $post): void {
 	wp_nonce_field('lp_save_project_fields', 'lp_project_fields_nonce');
 	$fields = lp_acf_like_fields();
@@ -235,6 +244,7 @@ function lp_render_project_fields_box(WP_Post $post): void {
 	<?php
 }
 
+// Render the served brand fields used on the public brand page.
 function lp_render_brand_fields_box(WP_Post $post): void {
 	wp_nonce_field('lp_save_brand_fields', 'lp_brand_fields_nonce');
 	?>
@@ -256,6 +266,7 @@ function lp_render_brand_fields_box(WP_Post $post): void {
 	<?php
 }
 
+// Render the editable homepage sections, including JSON-based repeatable blocks.
 function lp_render_home_fields_box(WP_Post $post): void {
 	wp_nonce_field('lp_save_home_fields', 'lp_home_fields_nonce');
 	?>
@@ -293,6 +304,7 @@ add_action('admin_enqueue_scripts', function (string $hook): void {
 	);
 });
 
+// Group all portfolio content in one WordPress admin menu for quick screen-share access.
 add_action('admin_menu', function (): void {
 	add_menu_page(
 		'Lago Portfolio',
@@ -308,6 +320,7 @@ add_action('admin_menu', function (): void {
 
 });
 
+// Persist field values with nonces, capability checks and type-aware sanitization.
 add_action('save_post', function (int $post_id): void {
 	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 		return;
@@ -366,6 +379,7 @@ add_action('save_post', function (int $post_id): void {
 	}
 });
 
+// Theme helper compatible with the common ACF get_field pattern.
 function lp_get_field(string $field_name, ?int $post_id = null) {
 	$post_id = $post_id ?: get_the_ID();
 	if (!$post_id) {
@@ -375,10 +389,12 @@ function lp_get_field(string $field_name, ?int $post_id = null) {
 	return get_post_meta($post_id, $field_name, true);
 }
 
+// Theme helper compatible with the common ACF the_field pattern.
 function lp_the_field(string $field_name, ?int $post_id = null): void {
 	echo wp_kses_post((string) lp_get_field($field_name, $post_id));
 }
 
+// Decode JSON flexible sections so the theme can render reusable layouts.
 function lp_get_flexible_sections(?int $post_id = null): array {
 	$raw = (string) lp_get_field('lp_flexible_json', $post_id);
 	if ($raw === '') {
@@ -389,6 +405,7 @@ function lp_get_flexible_sections(?int $post_id = null): array {
 	return is_array($decoded) ? $decoded : [];
 }
 
+// Expose custom meta fields in the WordPress REST API for integration proof.
 add_action('rest_api_init', function (): void {
 	foreach (array_keys(lp_project_types()) as $post_type) {
 		foreach (array_keys(lp_acf_like_fields()) as $field_name) {
