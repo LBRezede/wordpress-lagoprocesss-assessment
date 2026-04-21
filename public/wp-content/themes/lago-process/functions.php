@@ -32,6 +32,14 @@ add_action('wp_enqueue_scripts', function (): void {
 		[],
 		LAGO_THEME_VERSION
 	);
+
+	wp_enqueue_script(
+		'lago-process-navigation',
+		get_theme_file_uri('assets/js/navigation.js'),
+		[],
+		LAGO_THEME_VERSION,
+		true
+	);
 });
 
 remove_action('wp_head', 'rel_canonical');

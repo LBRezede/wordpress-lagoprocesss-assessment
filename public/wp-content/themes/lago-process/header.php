@@ -19,7 +19,13 @@ declare(strict_types=1);
 				<em>Portfolio and Showcase</em>
 			</span>
 		</a>
-		<nav class="main-nav" aria-label="<?php esc_attr_e('Primary navigation', 'lago-process'); ?>">
+		<button class="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false">
+			<span></span>
+			<span></span>
+			<span></span>
+			<strong>Menu</strong>
+		</button>
+		<nav id="site-navigation" class="main-nav" aria-label="<?php esc_attr_e('Primary navigation', 'lago-process'); ?>">
 			<?php
 			wp_nav_menu([
 				'theme_location' => 'primary',
