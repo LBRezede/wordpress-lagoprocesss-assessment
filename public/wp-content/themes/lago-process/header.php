@@ -25,7 +25,7 @@ declare(strict_types=1);
 				'theme_location' => 'primary',
 				'container'      => false,
 				'fallback_cb'    => false,
-				'depth'          => 1,
+				'depth'          => 2,
 			]);
 			?>
 			<a class="nav-cta" href="<?php echo esc_url(home_url('/schedule-next-step/')); ?>">Schedule</a>
