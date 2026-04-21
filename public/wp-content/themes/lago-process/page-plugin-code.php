@@ -12,7 +12,22 @@ function lago_plugin_code_read(string $relative_path): string {
 	return (string) file_get_contents($full_path);
 }
 
-$plugin_files = [
+function lago_plugin_code_field(string $key, string $fallback = ''): string {
+	$value = (string) get_post_meta(get_the_ID(), $key, true);
+	return $value !== '' ? $value : $fallback;
+}
+
+function lago_plugin_code_blocks(string $key, array $fallback = []): array {
+	$raw = (string) get_post_meta(get_the_ID(), $key, true);
+	if ($raw === '') {
+		return $fallback;
+	}
+
+	$decoded = json_decode($raw, true);
+	return is_array($decoded) ? $decoded : $fallback;
+}
+
+$plugin_files = lago_plugin_code_blocks('lp_plugin_code_files', [
 	[
 		'title' => 'Lago Process Toolkit Plugin',
 		'path' => 'plugins/lago-process-toolkit/lagoprocess-toolkit.php',
@@ -28,9 +43,16 @@ $plugin_files = [
 		'path' => 'mu-plugins/lago-page-cache.php',
 		'description' => 'Runs automatically as a must-use plugin and provides a small full-page cache for anonymous visitors with safe bypass and invalidation rules.',
 	],
-];
+]);
 
-$google_calendar_example = <<<'PHP'
+$summary_cards = lago_plugin_code_blocks('lp_plugin_code_summary_cards', [
+	['label' => 'Toolkit', 'value' => 'CPTs, fields, REST'],
+	['label' => 'MU Runtime', 'value' => 'Optimization layer'],
+	['label' => 'MU Cache', 'value' => 'Anonymous page cache'],
+	['label' => 'API Example', 'value' => 'Google Calendar'],
+]);
+
+$google_calendar_example = lago_plugin_code_field('lp_plugin_code_api_code', <<<'PHP'
 <?php
 declare(strict_types=1);
 
@@ -80,7 +102,7 @@ $createdEvent = $calendar->events->insert($calendarId, $event, [
 ]);
 
 echo $createdEvent->getHtmlLink();
-PHP;
+PHP);
 
 get_header();
 ?>
@@ -93,17 +115,20 @@ get_header();
 		</header>
 
 		<section class="code-summary-grid">
-			<div><span>Toolkit</span><strong>CPTs, fields, REST</strong></div>
-			<div><span>MU Runtime</span><strong>Optimization layer</strong></div>
-			<div><span>MU Cache</span><strong>Anonymous page cache</strong></div>
-			<div><span>API Example</span><strong>Google Calendar</strong></div>
+			<?php foreach ($summary_cards as $card) : ?>
+				<?php if (!is_array($card)) { continue; } ?>
+				<div>
+					<span><?php echo esc_html((string) ($card['label'] ?? 'Code')); ?></span>
+					<strong><?php echo esc_html((string) ($card['value'] ?? '')); ?></strong>
+				</div>
+			<?php endforeach; ?>
 		</section>
 
 		<section class="api-evidence-panel">
 			<div>
-				<p class="eyebrow">API Integration Pattern</p>
-				<h2>Google Calendar scheduling example</h2>
-				<p>This example shows how the scheduler or CRM layer can create a Calendar event with Google Meet. Secrets are represented by environment variables only; no private key or token is printed on this page.</p>
+				<p class="eyebrow"><?php echo esc_html(lago_plugin_code_field('lp_plugin_code_api_eyebrow', 'API Integration Pattern')); ?></p>
+				<h2><?php echo esc_html(lago_plugin_code_field('lp_plugin_code_api_title', 'Google Calendar scheduling example')); ?></h2>
+				<p><?php echo esc_html(lago_plugin_code_field('lp_plugin_code_api_body', 'This example shows how the scheduler or CRM layer can create a Calendar event with Google Meet. Secrets are represented by environment variables only; no private key or token is printed on this page.')); ?></p>
 			</div>
 			<pre><code><?php echo esc_html($google_calendar_example); ?></code></pre>
 		</section>

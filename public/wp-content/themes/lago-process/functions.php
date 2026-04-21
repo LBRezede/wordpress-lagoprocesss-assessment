@@ -194,8 +194,16 @@ function lago_project_accent(?string $post_type = null): string {
 	return is_array($config) ? (string) $config['accent'] : '#111827';
 }
 
-function lago_project_visual_uri(?string $post_type = null): string {
-	$post_type = $post_type ?: get_post_type();
+function lago_project_visual_uri(?int $post_id = null, ?string $post_type = null): string {
+	$post_id = $post_id ?: get_the_ID();
+	if ($post_id > 0 && has_post_thumbnail($post_id)) {
+		$image = get_the_post_thumbnail_url($post_id, 'large');
+		if (is_string($image) && $image !== '') {
+			return $image;
+		}
+	}
+
+	$post_type = $post_type ?: get_post_type($post_id);
 	$images = [
 		'lp_delivery'  => 'project-delivery.svg',
 		'lp_app'       => 'project-app.svg',

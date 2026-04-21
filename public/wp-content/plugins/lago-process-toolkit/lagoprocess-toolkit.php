@@ -184,6 +184,57 @@ function lp_home_fields(): array {
 	];
 }
 
+// Rollout page fields keep the custom migration panel editable from the classic page editor.
+function lp_rollout_fields(): array {
+	return [
+		'lp_rollout_hero_eyebrow' => ['label' => 'Hero eyebrow', 'type' => 'text'],
+		'lp_rollout_hero_lede' => ['label' => 'Hero intro text', 'type' => 'textarea'],
+		'lp_rollout_primary_label' => ['label' => 'Primary button label', 'type' => 'text'],
+		'lp_rollout_primary_url' => ['label' => 'Primary button URL', 'type' => 'text'],
+		'lp_rollout_secondary_label' => ['label' => 'Secondary button label', 'type' => 'text'],
+		'lp_rollout_secondary_url' => ['label' => 'Secondary button URL', 'type' => 'url'],
+		'lp_rollout_stats_json' => ['label' => 'Hero stats JSON', 'type' => 'textarea'],
+		'lp_rollout_hero_card_label' => ['label' => 'Hero card eyebrow', 'type' => 'text'],
+		'lp_rollout_hero_card_title' => ['label' => 'Hero card title', 'type' => 'textarea'],
+		'lp_rollout_hero_card_body' => ['label' => 'Hero card body', 'type' => 'textarea'],
+		'lp_rollout_proof_eyebrow' => ['label' => 'Proof section eyebrow', 'type' => 'text'],
+		'lp_rollout_proof_title' => ['label' => 'Proof section title', 'type' => 'textarea'],
+		'lp_rollout_proof_blocks' => ['label' => 'Proof blocks JSON', 'type' => 'textarea'],
+		'lp_rollout_story_eyebrow' => ['label' => 'Story eyebrow', 'type' => 'text'],
+		'lp_rollout_story_title' => ['label' => 'Story title', 'type' => 'textarea'],
+		'lp_rollout_story_body' => ['label' => 'Story body paragraph 1', 'type' => 'textarea'],
+		'lp_rollout_story_body_2' => ['label' => 'Story body paragraph 2', 'type' => 'textarea'],
+		'lp_rollout_timeline_eyebrow' => ['label' => 'Timeline eyebrow', 'type' => 'text'],
+		'lp_rollout_timeline_steps' => ['label' => 'Timeline steps JSON', 'type' => 'textarea'],
+		'lp_rollout_band_eyebrow' => ['label' => 'Band eyebrow', 'type' => 'text'],
+		'lp_rollout_band_title' => ['label' => 'Band title', 'type' => 'textarea'],
+		'lp_rollout_band_body' => ['label' => 'Band body', 'type' => 'textarea'],
+		'lp_rollout_screens_eyebrow' => ['label' => 'Screens eyebrow', 'type' => 'text'],
+		'lp_rollout_screens_title' => ['label' => 'Screens title', 'type' => 'textarea'],
+		'lp_rollout_screens_json' => ['label' => 'Screens JSON', 'type' => 'textarea'],
+	];
+}
+
+// Plugin code page fields keep code-page labels, summaries and file registry editable.
+function lp_plugin_code_fields(): array {
+	return [
+		'lp_plugin_code_summary_cards' => ['label' => 'Summary cards JSON', 'type' => 'textarea'],
+		'lp_plugin_code_api_eyebrow'   => ['label' => 'API section eyebrow', 'type' => 'text'],
+		'lp_plugin_code_api_title'     => ['label' => 'API section title', 'type' => 'text'],
+		'lp_plugin_code_api_body'      => ['label' => 'API section body', 'type' => 'textarea'],
+		'lp_plugin_code_api_code'      => ['label' => 'API example code', 'type' => 'textarea'],
+		'lp_plugin_code_files'         => ['label' => 'Code files JSON', 'type' => 'textarea'],
+	];
+}
+
+function lp_is_rollout_page(WP_Post $post): bool {
+	return $post->post_type === 'page' && $post->post_name === 'rollout-custom-panel';
+}
+
+function lp_is_plugin_code_page(WP_Post $post): bool {
+	return $post->post_type === 'page' && $post->post_name === 'plugin-code';
+}
+
 function lp_is_project_type(string $post_type): bool {
 	return array_key_exists($post_type, lp_project_types());
 }
@@ -214,6 +265,24 @@ add_action('add_meta_boxes', function (): void {
 		'lp_home_fields',
 		'Editable Home Sections',
 		'lp_render_home_fields_box',
+		'page',
+		'normal',
+		'high'
+	);
+
+	add_meta_box(
+		'lp_rollout_fields',
+		'Editable Rollout Sections',
+		'lp_render_rollout_fields_box',
+		'page',
+		'normal',
+		'high'
+	);
+
+	add_meta_box(
+		'lp_plugin_code_fields',
+		'Editable Plugin Code Sections',
+		'lp_render_plugin_code_fields_box',
 		'page',
 		'normal',
 		'high'
@@ -268,6 +337,11 @@ function lp_render_brand_fields_box(WP_Post $post): void {
 
 // Render the editable homepage sections, including JSON-based repeatable blocks.
 function lp_render_home_fields_box(WP_Post $post): void {
+	if ($post->post_name !== 'home') {
+		echo '<p>These homepage fields are only used by the page with slug <code>home</code>.</p>';
+		return;
+	}
+
 	wp_nonce_field('lp_save_home_fields', 'lp_home_fields_nonce');
 	?>
 	<div class="lp-fields">
@@ -280,6 +354,65 @@ function lp_render_home_fields_box(WP_Post $post): void {
 				<label for="<?php echo esc_attr($key); ?>"><strong><?php echo esc_html($field['label']); ?></strong></label><br>
 				<?php if ($field['type'] === 'textarea') : ?>
 					<textarea id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" rows="<?php echo str_contains($key, 'blocks') ? 7 : 3; ?>" style="width:100%;font-family:monospace;"><?php echo esc_textarea($value); ?></textarea>
+				<?php else : ?>
+					<input id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" type="<?php echo esc_attr($field['type']); ?>" value="<?php echo esc_attr($value); ?>" style="width:100%;">
+				<?php endif; ?>
+			</p>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
+// Render the rollout custom panel fields used by the rollout page template.
+function lp_render_rollout_fields_box(WP_Post $post): void {
+	if (!lp_is_rollout_page($post)) {
+		echo '<p>These rollout fields are only used by the page with slug <code>rollout-custom-panel</code>.</p>';
+		return;
+	}
+
+	wp_nonce_field('lp_save_rollout_fields', 'lp_rollout_fields_nonce');
+	?>
+	<div class="lp-fields">
+		<p>Edit the rollout panel copy, CTAs, metrics and repeatable blocks here. Use JSON arrays for stats, proof blocks, timeline steps and screenshot cards.</p>
+		<p>Example stats JSON: <code>[{"value":"12","label":"Localized proof screenshots"}]</code></p>
+		<?php foreach (lp_rollout_fields() as $key => $field) :
+			$value = (string) get_post_meta($post->ID, $key, true);
+			$is_json = str_contains($key, '_json') || str_contains($key, '_steps');
+			?>
+			<p>
+				<label for="<?php echo esc_attr($key); ?>"><strong><?php echo esc_html($field['label']); ?></strong></label><br>
+				<?php if ($field['type'] === 'textarea') : ?>
+					<textarea id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" rows="<?php echo $is_json ? 10 : 3; ?>" style="width:100%;font-family:monospace;"><?php echo esc_textarea($value); ?></textarea>
+				<?php else : ?>
+					<input id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" type="<?php echo esc_attr($field['type']); ?>" value="<?php echo esc_attr($value); ?>" style="width:100%;">
+				<?php endif; ?>
+			</p>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
+// Render the plugin code page fields so labels and visible file registry are manageable in wp-admin.
+function lp_render_plugin_code_fields_box(WP_Post $post): void {
+	if (!lp_is_plugin_code_page($post)) {
+		echo '<p>These code-page fields are only used by the page with slug <code>plugin-code</code>.</p>';
+		return;
+	}
+
+	wp_nonce_field('lp_save_plugin_code_fields', 'lp_plugin_code_fields_nonce');
+	?>
+	<div class="lp-fields">
+		<p>Edit the code-page summary cards, API example text, sample code and the visible file registry here. File contents are still loaded live from the paths below.</p>
+		<p>Example summary cards JSON: <code>[{"label":"Toolkit","value":"CPTs, fields, REST"}]</code></p>
+		<p>Example files JSON: <code>[{"title":"Lago Process Toolkit Plugin","path":"plugins/lago-process-toolkit/lagoprocess-toolkit.php","description":"Registers CPTs and fields."}]</code></p>
+		<?php foreach (lp_plugin_code_fields() as $key => $field) :
+			$value = (string) get_post_meta($post->ID, $key, true);
+			$is_large = str_contains($key, 'json') || str_contains($key, '_code') || $key === 'lp_plugin_code_files' || $key === 'lp_plugin_code_summary_cards';
+			?>
+			<p>
+				<label for="<?php echo esc_attr($key); ?>"><strong><?php echo esc_html($field['label']); ?></strong></label><br>
+				<?php if ($field['type'] === 'textarea') : ?>
+					<textarea id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" rows="<?php echo $is_large ? 10 : 3; ?>" style="width:100%;font-family:monospace;"><?php echo esc_textarea($value); ?></textarea>
 				<?php else : ?>
 					<input id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" type="<?php echo esc_attr($field['type']); ?>" value="<?php echo esc_attr($value); ?>" style="width:100%;">
 				<?php endif; ?>
@@ -374,6 +507,33 @@ add_action('save_post', function (int $post_id): void {
 				continue;
 			}
 
+			update_post_meta($post_id, $key, sanitize_textarea_field((string) $value));
+		}
+	}
+
+	if (isset($_POST['lp_rollout_fields_nonce']) && wp_verify_nonce((string) $_POST['lp_rollout_fields_nonce'], 'lp_save_rollout_fields')) {
+		foreach (lp_rollout_fields() as $key => $field) {
+			if (!isset($_POST[$key])) {
+				continue;
+			}
+
+			$value = wp_unslash($_POST[$key]);
+			if ($field['type'] === 'url') {
+				update_post_meta($post_id, $key, esc_url_raw((string) $value));
+				continue;
+			}
+
+			update_post_meta($post_id, $key, sanitize_textarea_field((string) $value));
+		}
+	}
+
+	if (isset($_POST['lp_plugin_code_fields_nonce']) && wp_verify_nonce((string) $_POST['lp_plugin_code_fields_nonce'], 'lp_save_plugin_code_fields')) {
+		foreach (lp_plugin_code_fields() as $key => $field) {
+			if (!isset($_POST[$key])) {
+				continue;
+			}
+
+			$value = wp_unslash($_POST[$key]);
 			update_post_meta($post_id, $key, sanitize_textarea_field((string) $value));
 		}
 	}
