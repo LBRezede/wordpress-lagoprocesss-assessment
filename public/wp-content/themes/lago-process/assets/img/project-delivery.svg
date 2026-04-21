@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-label="Delivery platform interface preview">
+  <rect width="1200" height="760" fill="#eeeeec"/>
+  <rect x="70" y="70" width="1060" height="620" rx="34" fill="#fff" stroke="#c9c9c4" stroke-width="2"/>
+  <rect x="120" y="125" width="330" height="510" rx="24" fill="#262626"/>
+  <rect x="500" y="125" width="580" height="92" rx="20" fill="#f4f4f2" stroke="#d7d7d3"/>
+  <rect x="500" y="250" width="260" height="180" rx="22" fill="#f7f7f5" stroke="#d7d7d3"/>
+  <rect x="800" y="250" width="280" height="180" rx="22" fill="#f7f7f5" stroke="#d7d7d3"/>
+  <rect x="500" y="465" width="580" height="120" rx="22" fill="#f7f7f5" stroke="#d7d7d3"/>
+  <circle cx="200" cy="210" r="42" fill="#d7d7d3"/>
+  <path d="M185 213h55l-10 45h-38z" fill="#fff"/>
+  <text x="178" y="333" fill="#fff" font-family="Arial" font-size="46" font-weight="700">Delivery</text>
+  <text x="530" y="181" fill="#292929" font-family="Arial" font-size="42" font-weight="700">Orders, admin and API workflow</text>
+</svg>

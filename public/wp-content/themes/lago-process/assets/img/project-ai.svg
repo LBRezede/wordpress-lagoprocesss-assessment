@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-label="AI workflow preview">
+  <rect width="1200" height="760" fill="#ededeb"/>
+  <rect x="80" y="80" width="1040" height="600" rx="34" fill="#202020"/>
+  <rect x="145" y="145" width="420" height="470" rx="26" fill="#2f2f2f" stroke="#555"/>
+  <rect x="630" y="145" width="425" height="130" rx="24" fill="#f4f4f2"/>
+  <rect x="630" y="315" width="425" height="130" rx="24" fill="#f4f4f2"/>
+  <rect x="630" y="485" width="425" height="130" rx="24" fill="#f4f4f2"/>
+  <text x="190" y="238" fill="#fff" font-family="Arial" font-size="54" font-weight="700">Fusion AI</text>
+  <text x="190" y="318" fill="#c9c9c4" font-family="Arial" font-size="30">Assistants, chatbot and CRM notes</text>
+</svg>

@@ -1,0 +1,30 @@
+services:
+  wordpress:
+    image: wordpress:6.5-php8.2-apache
+    ports:
+      - "8088:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: lagoprocess
+      WORDPRESS_DB_USER: lagoprocess
+      WORDPRESS_DB_PASSWORD: lagoprocess
+      WORDPRESS_DEBUG: "1"
+    volumes:
+      - ./public/wp-content/themes/lago-process:/var/www/html/wp-content/themes/lago-process
+      - ./public/wp-content/plugins/lago-process-toolkit:/var/www/html/wp-content/plugins/lago-process-toolkit
+      - ./public/wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: lagoprocess
+      MYSQL_USER: lagoprocess
+      MYSQL_PASSWORD: lagoprocess
+      MYSQL_ROOT_PASSWORD: lagoprocess-root
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
