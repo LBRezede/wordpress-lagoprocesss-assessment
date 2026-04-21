@@ -34,6 +34,69 @@ add_action('wp_enqueue_scripts', function (): void {
 	);
 });
 
+remove_action('wp_head', 'rel_canonical');
+
+function lago_seo_description(): string {
+	if (is_singular()) {
+		$excerpt = trim(wp_strip_all_tags((string) get_the_excerpt()));
+		if ($excerpt !== '') {
+			return $excerpt;
+		}
+	}
+
+	return 'Lucas Bacellar portfolio and showcase for custom WordPress development, marketing systems, hospitality platforms, integrations, Docker versioning and automation workflows.';
+}
+
+function lago_canonical_url(): string {
+	if (is_singular()) {
+		return (string) get_permalink();
+	}
+
+	return home_url(add_query_arg([], (string) wp_parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH)));
+}
+
+add_filter('wp_robots', function (array $robots): array {
+	$robots['index'] = true;
+	$robots['follow'] = true;
+	$robots['max-image-preview'] = 'large';
+	$robots['max-snippet'] = -1;
+	$robots['max-video-preview'] = -1;
+
+	return $robots;
+});
+
+add_filter('robots_txt', function (string $output): string {
+	return "User-agent: *\nAllow: /\nSitemap: " . home_url('/sitemap.xml') . "\n";
+}, 10, 1);
+
+add_action('wp_head', function (): void {
+	$title = wp_get_document_title();
+	$description = lago_seo_description();
+	$canonical = lago_canonical_url();
+	$image = get_theme_file_uri('assets/img/hero-showcase.webp');
+	?>
+	<meta name="description" content="<?php echo esc_attr($description); ?>">
+	<link rel="canonical" href="<?php echo esc_url($canonical); ?>">
+	<meta property="og:type" content="<?php echo is_singular() ? 'article' : 'website'; ?>">
+	<meta property="og:title" content="<?php echo esc_attr($title); ?>">
+	<meta property="og:description" content="<?php echo esc_attr($description); ?>">
+	<meta property="og:url" content="<?php echo esc_url($canonical); ?>">
+	<meta property="og:image" content="<?php echo esc_url($image); ?>">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="<?php echo esc_attr($title); ?>">
+	<meta name="twitter:description" content="<?php echo esc_attr($description); ?>">
+	<meta name="twitter:image" content="<?php echo esc_url($image); ?>">
+	<script type="application/ld+json"><?php echo wp_json_encode([
+		'@context' => 'https://schema.org',
+		'@type' => 'Person',
+		'name' => 'Lucas Bacellar',
+		'url' => home_url('/'),
+		'jobTitle' => 'WordPress Developer',
+		'knowsAbout' => ['WordPress', 'Elementor Pro', 'ACF', 'Zapier', 'CRM integrations', 'OpenAI workflows', 'Hospitality systems'],
+	], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
+	<?php
+}, 1);
+
 function lago_project_post_types(): array {
 	return function_exists('lp_project_types') ? lp_project_types() : [];
 }
