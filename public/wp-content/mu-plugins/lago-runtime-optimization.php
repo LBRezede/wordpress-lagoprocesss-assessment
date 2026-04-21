@@ -120,6 +120,8 @@ add_action('init', function (): void {
 	remove_action('wp_head', 'wp_oembed_add_host_js');
 	remove_action('wp_head', 'feed_links_extra', 3);
 	remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10);
+	remove_action('wp_enqueue_scripts', 'wp_enqueue_global_styles');
+	remove_action('wp_footer', 'wp_enqueue_global_styles', 1);
 
 	add_rewrite_rule('^sitemap\.xml$', 'index.php?lago_sitemap=1', 'top');
 }, 20);
@@ -190,15 +192,12 @@ add_filter('wp_get_attachment_image_attributes', function (array $attr): array {
 	return $attr;
 }, 20);
 
-// Add connection hints and accessible skip-link styling early in the head.
+// Add accessible skip-link styling early in the head without external font preconnects.
 add_action('wp_head', function (): void {
 	if (!lago_runtime_is_home()) {
 		return;
 	}
 	?>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="dns-prefetch" href="https://www.googletagmanager.com">
 	<style id="lago-runtime-css">
 		.skip-link:focus{position:fixed;left:12px;top:12px;z-index:100000;padding:12px 16px;background:#fff;color:#111;border:2px solid #111}
 	</style>

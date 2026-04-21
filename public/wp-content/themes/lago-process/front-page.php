@@ -34,7 +34,7 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 	</div>
 	<div class="hero-panel">
 		<div class="hero-banner hero-photo" aria-label="Portfolio systems banner">
-			<img src="<?php echo esc_url(get_theme_file_uri('assets/img/hero-showcase.webp')); ?>" alt="Premium workspace representing WordPress, Elementor Pro and hospitality marketing systems">
+			<img src="<?php echo esc_url(get_theme_file_uri('assets/img/hero-showcase.webp')); ?>" width="1536" height="1024" loading="eager" fetchpriority="high" decoding="sync" alt="Premium workspace representing WordPress, Elementor Pro and hospitality marketing systems">
 			<div>
 				<span><?php echo esc_html(lago_home_field('lp_home_banner_label', 'Featured build')); ?></span>
 				<strong><?php echo esc_html(lago_home_field('lp_home_banner_title', 'Custom WordPress + integrations portfolio')); ?></strong>
@@ -112,7 +112,7 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 				<?php $apis = array_slice(lago_field_lines('lp_integrated_apis'), 0, 3); ?>
 				<article class="project-card" style="--accent: <?php echo esc_attr(lago_project_accent()); ?>">
 					<a class="project-thumb" href="<?php the_permalink(); ?>">
-						<img src="<?php echo esc_url(lago_project_visual_uri()); ?>" alt="<?php echo esc_attr(get_the_title()); ?> visual">
+						<img src="<?php echo esc_url(lago_project_visual_uri()); ?>" width="1200" height="760" loading="lazy" decoding="async" alt="<?php echo esc_attr(get_the_title()); ?> visual">
 					</a>
 					<div class="project-card-top">
 						<span class="project-icon"><?php echo esc_html(lago_field('lp_icon') ?: '◆'); ?></span>

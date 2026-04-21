@@ -53,7 +53,8 @@ function lago_page_cache_should_bypass(): bool {
 function lago_page_cache_key(): string {
 	$host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? 'site'));
 	$uri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
-	return hash('sha256', $host . '|' . $uri) . '.html';
+	$theme_version = defined('LAGO_THEME_VERSION') ? (string) LAGO_THEME_VERSION : '1';
+	return hash('sha256', $theme_version . '|' . $host . '|' . $uri) . '.html';
 }
 
 // Resolve the full cache file path for the current request.

@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-const LAGO_THEME_VERSION = '1.0.0';
+const LAGO_THEME_VERSION = '1.1.0';
 
 add_action('after_setup_theme', function (): void {
 	add_theme_support('title-tag');
@@ -19,13 +19,6 @@ add_action('after_setup_theme', function (): void {
 });
 
 add_action('wp_enqueue_scripts', function (): void {
-	wp_enqueue_style(
-		'lago-process-fonts',
-		'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap',
-		[],
-		null
-	);
-
 	wp_enqueue_style(
 		'lago-process-screen',
 		get_theme_file_uri('assets/css/screen.css'),
@@ -41,6 +34,15 @@ add_action('wp_enqueue_scripts', function (): void {
 		true
 	);
 });
+
+add_filter('style_loader_tag', function (string $html, string $handle, string $href): string {
+	if ($handle !== 'lago-process-screen' || is_admin() || $href === '') {
+		return $html;
+	}
+
+	return '<link rel="preload" as="style" id="' . esc_attr($handle) . '-css-preload" href="' . esc_url($href) . '" onload="this.onload=null;this.rel=\'stylesheet\'">'
+		. '<noscript><link rel="stylesheet" id="' . esc_attr($handle) . '-css" href="' . esc_url($href) . '"></noscript>';
+}, 10, 3);
 
 remove_action('wp_head', 'rel_canonical');
 
@@ -83,6 +85,7 @@ add_action('wp_head', function (): void {
 	$canonical = lago_canonical_url();
 	$image = get_theme_file_uri('assets/img/hero-showcase.webp');
 	?>
+	<link rel="preload" as="image" href="<?php echo esc_url($image); ?>" imagesrcset="<?php echo esc_url($image); ?> 1536w" imagesizes="(max-width: 920px) 100vw, 61vw" fetchpriority="high">
 	<meta name="description" content="<?php echo esc_attr($description); ?>">
 	<link rel="canonical" href="<?php echo esc_url($canonical); ?>">
 	<meta property="og:type" content="<?php echo is_singular() ? 'article' : 'website'; ?>">
@@ -104,6 +107,20 @@ add_action('wp_head', function (): void {
 	], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
 	<?php
 }, 1);
+
+add_action('wp_head', function (): void {
+	if (!is_front_page() && !is_home()) {
+		return;
+	}
+	?>
+	<style id="lago-critical-css">
+		:root{--bg:#f4f4f2;--surface:#fff;--ink:#171717;--muted:#6d6d6a;--line:#d7d7d3;--charcoal:#2b2b2b}
+		*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Aptos,"Segoe UI",sans-serif;line-height:1.65}a{color:inherit}.site-main,.site-footer{width:min(1180px,calc(100% - 40px));margin:0 auto}.site-header{width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(244,244,242,.92)}.site-header-inner{display:flex;align-items:center;justify-content:space-between;gap:28px;width:100%;padding:18px 24px}.brand{display:flex;align-items:center;gap:14px;text-decoration:none}.brand-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--charcoal);color:#fff;font-size:13px;font-weight:800}.brand strong,.brand em{display:block}.brand em{color:var(--muted);font-size:12px;font-style:normal}.main-nav{display:flex;align-items:center;gap:18px}.main-nav ul{display:flex;align-items:center;gap:8px;margin:0;padding:0;list-style:none}.main-nav a,.nav-cta,.button{display:inline-flex;align-items:center;text-decoration:none}.main-nav a{border-radius:999px;padding:10px 12px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.nav-cta,.button{justify-content:center;border:1px solid var(--ink);border-radius:999px;padding:11px 18px;font-size:13px;font-weight:800}.nav-cta,.button.primary{background:var(--ink);color:#fff!important}.hero-section{display:grid;grid-template-columns:minmax(340px,.78fr) minmax(0,1.22fr);gap:0;width:100vw;margin-left:calc(50% - 50vw);border-bottom:1px solid var(--line)}.hero-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(34px,5vw,72px)}.eyebrow{margin:0 0 14px;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}h1,h2,h3{margin:0;color:var(--ink);font-family:Georgia,"Times New Roman",serif;font-weight:600;line-height:.98;letter-spacing:-.035em}.hero-copy h1{max-width:590px;font-size:clamp(30px,3.4vw,46px);line-height:1.04}.hero-lede{max-width:720px;margin:24px 0 0;color:var(--muted);font-size:clamp(17px,1.8vw,22px)}.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}.hero-panel{overflow:hidden;background:var(--surface)}.hero-banner{position:relative;display:flex;align-items:end;min-height:520px;overflow:hidden;background:#1f1f1f}.hero-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(70%) contrast(1.04)}.hero-banner:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,20,20,.48),rgba(20,20,20,0) 52%)}.hero-banner>div{position:relative;z-index:1;width:min(420px,calc(100% - 44px));margin:28px;border-radius:18px;padding:22px;background:rgba(255,255,255,.92)}@media(max-width:920px){.main-nav{display:none}.site-header.is-menu-open .main-nav{display:grid}.hero-section{display:block}.hero-banner{min-height:360px}}
+	</style>
+	<?php
+}, 2);
+
+add_filter('wp_speculation_rules_configuration', '__return_null');
 
 function lago_project_post_types(): array {
 	return function_exists('lp_project_types') ? lp_project_types() : [];

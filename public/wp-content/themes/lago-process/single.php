@@ -12,7 +12,7 @@ get_header();
 				<p><?php echo esc_html(lago_field('lp_project_summary') ?: get_the_excerpt()); ?></p>
 			</div>
 			<figure class="project-hero-image">
-				<img src="<?php echo esc_url(lago_project_visual_uri()); ?>" alt="<?php echo esc_attr(get_the_title()); ?> project visual">
+				<img src="<?php echo esc_url(lago_project_visual_uri()); ?>" width="1200" height="760" loading="eager" decoding="async" alt="<?php echo esc_attr(get_the_title()); ?> project visual">
 			</figure>
 		</header>
 

@@ -16,7 +16,7 @@ $project_query = new WP_Query(lago_project_query_args(20));
 			<?php while ($project_query->have_posts()) : $project_query->the_post(); ?>
 				<article class="directory-card">
 					<a class="project-thumb" href="<?php the_permalink(); ?>">
-						<img src="<?php echo esc_url(lago_project_visual_uri()); ?>" alt="<?php echo esc_attr(get_the_title()); ?> visual">
+						<img src="<?php echo esc_url(lago_project_visual_uri()); ?>" width="1200" height="760" loading="lazy" decoding="async" alt="<?php echo esc_attr(get_the_title()); ?> visual">
 					</a>
 					<p class="project-type"><?php echo esc_html(lago_project_type_label()); ?></p>
 					<h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
