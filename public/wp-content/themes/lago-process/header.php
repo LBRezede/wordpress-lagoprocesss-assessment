@@ -13,10 +13,10 @@ declare(strict_types=1);
 <header class="site-header">
 	<div class="site-header-inner">
 		<a class="brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?>">
-			<span class="brand-mark">LB</span>
+			<span class="brand-mark"><?php echo esc_html(lago_site_setting('lp_brand_mark', 'LB')); ?></span>
 			<span>
 				<strong><?php bloginfo('name'); ?></strong>
-				<em>Portfolio and Showcase</em>
+				<em><?php echo esc_html(lago_site_setting('lp_brand_subtitle', 'Portfolio and Showcase')); ?></em>
 			</span>
 		</a>
 		<button class="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false">
@@ -34,7 +34,7 @@ declare(strict_types=1);
 				'depth'          => 2,
 			]);
 			?>
-			<a class="nav-cta" href="<?php echo esc_url(home_url('/schedule-next-step/')); ?>">Schedule</a>
+			<a class="nav-cta" href="<?php echo esc_url(lago_site_setting('lp_header_cta_url', home_url('/schedule-next-step/'))); ?>"><?php echo esc_html(lago_site_setting('lp_header_cta_label', 'Schedule')); ?></a>
 		</nav>
 	</div>
 </header>

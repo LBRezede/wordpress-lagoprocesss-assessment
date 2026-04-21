@@ -6,9 +6,9 @@ $project_query = new WP_Query(lago_project_query_args(20));
 ?>
 <article class="directory-page">
 	<header class="directory-hero">
-		<p class="eyebrow">Project Index</p>
+		<p class="eyebrow"><?php echo esc_html(lago_page_field('lp_projects_eyebrow', 'Project Index')); ?></p>
 		<h1><?php the_title(); ?></h1>
-		<p>Published project pages with documentation, system access, technology stack, integrated APIs and visual context.</p>
+		<p><?php echo esc_html(lago_page_field('lp_projects_lede', 'Published project pages with documentation, system access, technology stack, integrated APIs and visual context.')); ?></p>
 	</header>
 
 	<section class="project-directory-grid">
@@ -22,10 +22,10 @@ $project_query = new WP_Query(lago_project_query_args(20));
 					<h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 					<p><?php echo esc_html(lago_field('lp_project_summary') ?: get_the_excerpt()); ?></p>
 					<div class="directory-meta">
-						<span>Stack</span>
+						<span><?php echo esc_html(lago_page_field('lp_projects_stack_label', 'Stack')); ?></span>
 						<strong><?php echo esc_html(lago_field('lp_stack')); ?></strong>
 					</div>
-					<a class="button ghost" href="<?php the_permalink(); ?>">Open project page</a>
+					<a class="button ghost" href="<?php the_permalink(); ?>"><?php echo esc_html(lago_page_field('lp_projects_button_label', 'Open project page')); ?></a>
 				</article>
 			<?php endwhile; wp_reset_postdata(); ?>
 		<?php endif; ?>

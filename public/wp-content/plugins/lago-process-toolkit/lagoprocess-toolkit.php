@@ -170,15 +170,30 @@ function lp_home_fields(): array {
 		'lp_home_banner_title' => ['label' => 'Hero image card title', 'type' => 'text'],
 		'lp_home_banner_body' => ['label' => 'Hero image card body', 'type' => 'textarea'],
 		'lp_home_banner_badge' => ['label' => 'Hero image card badge', 'type' => 'text'],
+		'lp_home_stats_json' => ['label' => 'Hero stats JSON', 'type' => 'textarea'],
+		'lp_home_proof_eyebrow' => ['label' => 'Proof eyebrow', 'type' => 'text'],
 		'lp_home_proof_title' => ['label' => 'Proof section title', 'type' => 'textarea'],
 		'lp_home_proof_blocks' => ['label' => 'Proof blocks JSON', 'type' => 'textarea'],
+		'lp_home_architecture_eyebrow' => ['label' => 'Architecture eyebrow', 'type' => 'text'],
 		'lp_home_architecture_title' => ['label' => 'Architecture section title', 'type' => 'textarea'],
 		'lp_home_architecture_blocks' => ['label' => 'Architecture blocks JSON', 'type' => 'textarea'],
+		'lp_home_documentation_eyebrow' => ['label' => 'Documentation eyebrow', 'type' => 'text'],
 		'lp_home_documentation_title' => ['label' => 'Documentation band title', 'type' => 'text'],
 		'lp_home_documentation_body' => ['label' => 'Documentation band body', 'type' => 'textarea'],
+		'lp_home_documentation_button_label' => ['label' => 'Documentation button label', 'type' => 'text'],
+		'lp_home_documentation_button_url' => ['label' => 'Documentation button URL', 'type' => 'url'],
+		'lp_home_scheduler_eyebrow' => ['label' => 'Scheduler eyebrow', 'type' => 'text'],
 		'lp_home_scheduler_title' => ['label' => 'Scheduler CTA title', 'type' => 'text'],
 		'lp_home_scheduler_body' => ['label' => 'Scheduler CTA body', 'type' => 'textarea'],
 		'lp_home_scheduler_url' => ['label' => 'Scheduler URL', 'type' => 'url'],
+		'lp_home_scheduler_button_label' => ['label' => 'Scheduler button label', 'type' => 'text'],
+		'lp_home_projects_eyebrow' => ['label' => 'Projects eyebrow', 'type' => 'text'],
+		'lp_home_projects_title' => ['label' => 'Projects title', 'type' => 'textarea'],
+		'lp_home_projects_button_label' => ['label' => 'Projects button label', 'type' => 'text'],
+		'lp_home_brands_eyebrow' => ['label' => 'Brands eyebrow', 'type' => 'text'],
+		'lp_home_brands_title' => ['label' => 'Brands title', 'type' => 'textarea'],
+		'lp_home_brands_button_label' => ['label' => 'Brands button label', 'type' => 'text'],
+		'lp_home_highlights_eyebrow' => ['label' => 'Highlights eyebrow', 'type' => 'text'],
 		'lp_home_highlights_title' => ['label' => 'Highlights section title', 'type' => 'textarea'],
 		'lp_home_highlights_blocks' => ['label' => 'Highlights blocks JSON', 'type' => 'textarea'],
 	];
@@ -218,6 +233,7 @@ function lp_rollout_fields(): array {
 // Plugin code page fields keep code-page labels, summaries and file registry editable.
 function lp_plugin_code_fields(): array {
 	return [
+		'lp_plugin_code_hero_eyebrow'   => ['label' => 'Hero eyebrow', 'type' => 'text'],
 		'lp_plugin_code_summary_cards' => ['label' => 'Summary cards JSON', 'type' => 'textarea'],
 		'lp_plugin_code_api_eyebrow'   => ['label' => 'API section eyebrow', 'type' => 'text'],
 		'lp_plugin_code_api_title'     => ['label' => 'API section title', 'type' => 'text'],
@@ -225,6 +241,98 @@ function lp_plugin_code_fields(): array {
 		'lp_plugin_code_api_code'      => ['label' => 'API example code', 'type' => 'textarea'],
 		'lp_plugin_code_files'         => ['label' => 'Code panels JSON', 'type' => 'textarea'],
 	];
+}
+
+function lp_global_fields(): array {
+	return [
+		'lp_brand_mark'                  => ['label' => 'Header brand mark', 'type' => 'text'],
+		'lp_brand_subtitle'              => ['label' => 'Header subtitle', 'type' => 'text'],
+		'lp_header_cta_label'            => ['label' => 'Header CTA label', 'type' => 'text'],
+		'lp_header_cta_url'              => ['label' => 'Header CTA URL', 'type' => 'url'],
+		'lp_footer_text'                 => ['label' => 'Footer text', 'type' => 'textarea'],
+		'lp_footer_link_label'           => ['label' => 'Footer link label', 'type' => 'text'],
+		'lp_default_seo_description'     => ['label' => 'Default SEO description', 'type' => 'textarea'],
+		'lp_default_social_image_url'    => ['label' => 'Default social image URL', 'type' => 'url'],
+		'lp_schema_person_name'          => ['label' => 'Schema person name', 'type' => 'text'],
+		'lp_schema_job_title'            => ['label' => 'Schema job title', 'type' => 'text'],
+		'lp_schema_knows_about_json'     => ['label' => 'Schema knowsAbout JSON', 'type' => 'textarea'],
+		'lp_archive_latest_label'        => ['label' => 'Archive fallback eyebrow', 'type' => 'text'],
+		'lp_archive_empty_message'       => ['label' => 'Archive empty message', 'type' => 'text'],
+		'lp_single_client_label'         => ['label' => 'Single project client label', 'type' => 'text'],
+		'lp_single_source_label'         => ['label' => 'Single project source label', 'type' => 'text'],
+		'lp_single_demo_label'           => ['label' => 'Single project demo label', 'type' => 'text'],
+		'lp_single_demo_link_label'      => ['label' => 'Single project demo link label', 'type' => 'text'],
+		'lp_single_private_label'        => ['label' => 'Single project private demo label', 'type' => 'text'],
+		'lp_single_access_eyebrow'       => ['label' => 'Access section eyebrow', 'type' => 'text'],
+		'lp_single_access_title'         => ['label' => 'Access section title', 'type' => 'text'],
+		'lp_single_access_body'          => ['label' => 'Access section body', 'type' => 'textarea'],
+		'lp_single_project_label'        => ['label' => 'Access project label', 'type' => 'text'],
+		'lp_single_login_label'          => ['label' => 'Access login label', 'type' => 'text'],
+		'lp_single_user_label'           => ['label' => 'Access user label', 'type' => 'text'],
+		'lp_single_password_label'       => ['label' => 'Access password label', 'type' => 'text'],
+		'lp_single_not_provided_label'   => ['label' => 'Access not provided label', 'type' => 'text'],
+		'lp_single_user_fallback'        => ['label' => 'Access user fallback', 'type' => 'text'],
+		'lp_single_password_fallback'    => ['label' => 'Access password fallback', 'type' => 'text'],
+		'lp_single_stack_title'          => ['label' => 'Stack section title', 'type' => 'text'],
+		'lp_single_integrated_apis_title'=> ['label' => 'Integrated APIs section title', 'type' => 'text'],
+		'lp_single_admin_features_title' => ['label' => 'Admin features section title', 'type' => 'text'],
+		'lp_single_documentation_title'  => ['label' => 'Documentation section title', 'type' => 'text'],
+		'lp_single_code_evidence_title'  => ['label' => 'Code evidence section title', 'type' => 'text'],
+		'lp_single_integrations_title'   => ['label' => 'Integrations section title', 'type' => 'text'],
+		'lp_single_automation_title'     => ['label' => 'Automation section title', 'type' => 'text'],
+		'lp_single_outcome_title'        => ['label' => 'Outcome section title', 'type' => 'text'],
+	];
+}
+
+function lp_page_fields_for_slug(string $slug): array {
+	return match ($slug) {
+		'documentation' => [
+			'lp_doc_hero_eyebrow'     => ['label' => 'Hero eyebrow', 'type' => 'text'],
+			'lp_doc_hero_lede'        => ['label' => 'Hero lede', 'type' => 'textarea'],
+			'lp_doc_summary_cards'    => ['label' => 'Summary cards JSON', 'type' => 'textarea'],
+			'lp_doc_nav_links'        => ['label' => 'Navigation links JSON', 'type' => 'textarea'],
+			'lp_doc_sections'         => ['label' => 'Documentation sections JSON', 'type' => 'textarea'],
+		],
+		'projects' => [
+			'lp_projects_eyebrow'     => ['label' => 'Hero eyebrow', 'type' => 'text'],
+			'lp_projects_lede'        => ['label' => 'Hero lede', 'type' => 'textarea'],
+			'lp_projects_stack_label' => ['label' => 'Stack label', 'type' => 'text'],
+			'lp_projects_button_label'=> ['label' => 'Card button label', 'type' => 'text'],
+		],
+		'brands' => [
+			'lp_brands_eyebrow'       => ['label' => 'Hero eyebrow', 'type' => 'text'],
+			'lp_brands_lede'          => ['label' => 'Hero lede', 'type' => 'textarea'],
+			'lp_brands_stack_prefix'  => ['label' => 'Stack prefix', 'type' => 'text'],
+			'lp_brands_button_label'  => ['label' => 'Card button label', 'type' => 'text'],
+		],
+		'versioning' => [
+			'lp_versioning_eyebrow'   => ['label' => 'Hero eyebrow', 'type' => 'text'],
+			'lp_versioning_cards'     => ['label' => 'Version cards JSON', 'type' => 'textarea'],
+			'lp_versioning_commands_title' => ['label' => 'Commands panel title', 'type' => 'text'],
+			'lp_versioning_commands_code'  => ['label' => 'Commands panel code', 'type' => 'textarea'],
+		],
+		'schedule-next-step' => [
+			'lp_schedule_eyebrow'     => ['label' => 'Hero eyebrow', 'type' => 'text'],
+			'lp_schedule_card_title'  => ['label' => 'Card title', 'type' => 'text'],
+			'lp_schedule_card_body'   => ['label' => 'Card body', 'type' => 'textarea'],
+			'lp_schedule_button_label'=> ['label' => 'Button label', 'type' => 'text'],
+			'lp_schedule_button_url'  => ['label' => 'Button URL', 'type' => 'url'],
+		],
+		'zapier-integration' => [
+			'lp_zapier_eyebrow'         => ['label' => 'Hero eyebrow', 'type' => 'text'],
+			'lp_zapier_panel_title'     => ['label' => 'Panel title', 'type' => 'text'],
+			'lp_zapier_panel_body'      => ['label' => 'Panel body', 'type' => 'textarea'],
+			'lp_zapier_webhook_label'   => ['label' => 'Webhook field label', 'type' => 'text'],
+			'lp_zapier_api_key_label'   => ['label' => 'API key field label', 'type' => 'text'],
+			'lp_zapier_test_name_label' => ['label' => 'Test name field label', 'type' => 'text'],
+			'lp_zapier_test_email_label'=> ['label' => 'Test email field label', 'type' => 'text'],
+			'lp_zapier_submit_label'    => ['label' => 'Submit button label', 'type' => 'text'],
+			'lp_zapier_invalid_url_msg' => ['label' => 'Invalid URL message', 'type' => 'text'],
+			'lp_zapier_success_msg'     => ['label' => 'Success message', 'type' => 'text'],
+			'lp_zapier_default_name'    => ['label' => 'Default test name', 'type' => 'text'],
+		],
+		default => [],
+	};
 }
 
 function lp_is_rollout_page(WP_Post $post): bool {
@@ -283,6 +391,15 @@ add_action('add_meta_boxes', function (): void {
 		'lp_plugin_code_fields',
 		'Editable Plugin Code Sections',
 		'lp_render_plugin_code_fields_box',
+		'page',
+		'normal',
+		'high'
+	);
+
+	add_meta_box(
+		'lp_page_specific_fields',
+		'Editable Page Sections',
+		'lp_render_page_specific_fields_box',
 		'page',
 		'normal',
 		'high'
@@ -422,6 +539,34 @@ function lp_render_plugin_code_fields_box(WP_Post $post): void {
 	<?php
 }
 
+function lp_render_page_specific_fields_box(WP_Post $post): void {
+	$fields = lp_page_fields_for_slug($post->post_name);
+	if ($fields === [] || $post->post_name === 'home' || lp_is_rollout_page($post) || lp_is_plugin_code_page($post)) {
+		echo '<p>No extra page-specific fields are registered for this page.</p>';
+		return;
+	}
+
+	wp_nonce_field('lp_save_page_specific_fields', 'lp_page_specific_fields_nonce');
+	?>
+	<div class="lp-fields">
+		<p>These fields control the template-level text for this page while keeping the body content editable in the classic editor.</p>
+		<?php foreach ($fields as $key => $field) :
+			$value = (string) get_post_meta($post->ID, $key, true);
+			$is_large = $field['type'] === 'textarea';
+			?>
+			<p>
+				<label for="<?php echo esc_attr($key); ?>"><strong><?php echo esc_html($field['label']); ?></strong></label><br>
+				<?php if ($field['type'] === 'textarea') : ?>
+					<textarea id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" rows="<?php echo $is_large ? 8 : 3; ?>" style="width:100%;font-family:monospace;"><?php echo esc_textarea($value); ?></textarea>
+				<?php else : ?>
+					<input id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" type="<?php echo esc_attr($field['type']); ?>" value="<?php echo esc_attr($value); ?>" style="width:100%;">
+				<?php endif; ?>
+			</p>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
 add_action('admin_enqueue_scripts', function (string $hook): void {
 	$screen = get_current_screen();
 	if (!$screen instanceof WP_Screen || !lp_is_project_type((string) $screen->post_type)) {
@@ -451,7 +596,64 @@ add_action('admin_menu', function (): void {
 		25
 	);
 
+	add_submenu_page(
+		'lago-portfolio',
+		'Lago Site Settings',
+		'Site Settings',
+		'edit_theme_options',
+		'lago-site-settings',
+		'lp_render_site_settings_page'
+	);
+
 });
+
+function lp_render_site_settings_page(): void {
+	if (!current_user_can('edit_theme_options')) {
+		return;
+	}
+
+	if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['lp_site_settings_nonce']) && wp_verify_nonce((string) $_POST['lp_site_settings_nonce'], 'lp_save_site_settings')) {
+		foreach (lp_global_fields() as $key => $field) {
+			$value = wp_unslash($_POST[$key] ?? '');
+			if ($field['type'] === 'url') {
+				update_option($key, esc_url_raw((string) $value));
+				continue;
+			}
+
+			update_option($key, sanitize_textarea_field((string) $value));
+		}
+
+		echo '<div class="notice notice-success"><p>Site settings saved.</p></div>';
+	}
+	?>
+	<div class="wrap">
+		<h1>Lago Site Settings</h1>
+		<p>These settings control the global header, footer, SEO defaults, archive text and shared labels used across the portfolio.</p>
+		<form method="post">
+			<?php wp_nonce_field('lp_save_site_settings', 'lp_site_settings_nonce'); ?>
+			<table class="form-table" role="presentation">
+				<tbody>
+				<?php foreach (lp_global_fields() as $key => $field) :
+					$value = (string) get_option($key, '');
+					?>
+					<tr>
+						<th scope="row"><label for="<?php echo esc_attr($key); ?>"><?php echo esc_html($field['label']); ?></label></th>
+						<td>
+							<?php if ($field['type'] === 'textarea') : ?>
+								<textarea id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" rows="4" class="large-text code"><?php echo esc_textarea($value); ?></textarea>
+							<?php else : ?>
+								<input id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" type="<?php echo esc_attr($field['type']); ?>" value="<?php echo esc_attr($value); ?>" class="regular-text">
+							<?php endif; ?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+			<?php submit_button('Save Site Settings'); ?>
+		</form>
+	</div>
+	<?php
+}
 
 // Persist field values with nonces, capability checks and type-aware sanitization.
 add_action('save_post', function (int $post_id): void {
@@ -542,6 +744,23 @@ add_action('save_post', function (int $post_id): void {
 			update_post_meta($post_id, $key, sanitize_textarea_field((string) $value));
 		}
 	}
+
+	if (isset($_POST['lp_page_specific_fields_nonce']) && wp_verify_nonce((string) $_POST['lp_page_specific_fields_nonce'], 'lp_save_page_specific_fields')) {
+		$slug = (string) get_post_field('post_name', $post_id);
+		foreach (lp_page_fields_for_slug($slug) as $key => $field) {
+			if (!isset($_POST[$key])) {
+				continue;
+			}
+
+			$value = wp_unslash($_POST[$key]);
+			if ($field['type'] === 'url') {
+				update_post_meta($post_id, $key, esc_url_raw((string) $value));
+				continue;
+			}
+
+			update_post_meta($post_id, $key, sanitize_textarea_field((string) $value));
+		}
+	}
 });
 
 // Theme helper compatible with the common ACF get_field pattern.
@@ -557,6 +776,11 @@ function lp_get_field(string $field_name, ?int $post_id = null) {
 // Theme helper compatible with the common ACF the_field pattern.
 function lp_the_field(string $field_name, ?int $post_id = null): void {
 	echo wp_kses_post((string) lp_get_field($field_name, $post_id));
+}
+
+function lp_get_option(string $field_name, string $fallback = ''): string {
+	$value = get_option($field_name, '');
+	return is_string($value) && $value !== '' ? $value : $fallback;
 }
 
 // Decode JSON flexible sections so the theme can render reusable layouts.

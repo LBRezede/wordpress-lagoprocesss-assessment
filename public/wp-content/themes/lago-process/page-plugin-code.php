@@ -166,7 +166,7 @@ get_header();
 <?php while (have_posts()) : the_post(); ?>
 	<article class="plugin-code-page">
 		<header class="doc-hero">
-			<p class="eyebrow">Code Evidence</p>
+			<p class="eyebrow"><?php echo esc_html(lago_plugin_code_field('lp_plugin_code_hero_eyebrow', 'Code Evidence')); ?></p>
 			<h1><?php the_title(); ?></h1>
 			<?php the_content(); ?>
 		</header>

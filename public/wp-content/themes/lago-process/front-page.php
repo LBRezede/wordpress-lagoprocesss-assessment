@@ -4,6 +4,13 @@ declare(strict_types=1);
 get_header();
 $project_query = new WP_Query(lago_project_query_args(12));
 $brand_query = new WP_Query(lago_brand_query_args(12));
+$front_page_id = (int) get_option('page_on_front');
+$hero_image = $front_page_id > 0 && has_post_thumbnail($front_page_id) ? (string) get_the_post_thumbnail_url($front_page_id, 'full') : get_theme_file_uri('assets/img/hero-showcase.webp');
+$home_stats = lago_decode_json_blocks(lago_home_field('lp_home_stats_json'), [
+	['value' => '5', 'label' => 'Custom post types'],
+	['value' => '10+', 'label' => 'Editable project fields'],
+	['value' => '2', 'label' => 'MU performance/cache plugins'],
+]);
 $proof_blocks = lago_decode_json_blocks(lago_home_field('lp_home_proof_blocks'), [
 	['title' => 'Classic Editor', 'body' => 'Gutenberg is disabled by code. Pages and CPTs open in the classic WordPress editor.'],
 	['title' => 'Theme-owned layout', 'body' => 'Hero, proof blocks, brands, cards, documentation and singles are rendered by PHP theme templates.'],
@@ -34,7 +41,7 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 	</div>
 	<div class="hero-panel">
 		<div class="hero-banner hero-photo" aria-label="Portfolio systems banner">
-			<img src="<?php echo esc_url(get_theme_file_uri('assets/img/hero-showcase.webp')); ?>" width="1536" height="1024" loading="eager" fetchpriority="high" decoding="sync" alt="Premium workspace representing WordPress, Elementor Pro and hospitality marketing systems">
+			<img src="<?php echo esc_url($hero_image); ?>" width="1536" height="1024" loading="eager" fetchpriority="high" decoding="sync" alt="Premium workspace representing WordPress, Elementor Pro and hospitality marketing systems">
 			<div>
 				<span><?php echo esc_html(lago_home_field('lp_home_banner_label', 'Featured build')); ?></span>
 				<strong><?php echo esc_html(lago_home_field('lp_home_banner_title', 'Custom WordPress + integrations portfolio')); ?></strong>
@@ -43,16 +50,17 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 			</div>
 		</div>
 		<div class="stat-strip">
-			<strong>5</strong><span>Custom post types</span>
-			<strong>10+</strong><span>Editable project fields</span>
-			<strong>2</strong><span>MU performance/cache plugins</span>
+			<?php foreach ($home_stats as $stat) : ?>
+				<?php if (!is_array($stat)) { continue; } ?>
+				<strong><?php echo esc_html((string) ($stat['value'] ?? '')); ?></strong><span><?php echo esc_html((string) ($stat['label'] ?? '')); ?></span>
+			<?php endforeach; ?>
 		</div>
 	</div>
 </section>
 
 <section id="proofs" class="proof-section">
 	<div class="section-heading">
-		<p class="eyebrow">Proof Highlights</p>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_proof_eyebrow', 'Proof Highlights')); ?></p>
 		<h2><?php echo esc_html(lago_home_field('lp_home_proof_title', 'What this portfolio proves at a technical level.')); ?></h2>
 	</div>
 	<div class="proof-grid">
@@ -68,7 +76,7 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 
 <section id="architecture" class="architecture-section">
 	<div>
-		<p class="eyebrow">Implementation notes</p>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_architecture_eyebrow', 'Implementation notes')); ?></p>
 		<h2><?php echo esc_html(lago_home_field('lp_home_architecture_title', 'Built to screen-share code, not just pages.')); ?></h2>
 	</div>
 	<div class="architecture-grid">
@@ -85,26 +93,26 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 
 <section id="documentation" class="documentation-band">
 	<div>
-		<p class="eyebrow">Documentation</p>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_documentation_eyebrow', 'Documentation')); ?></p>
 		<h2><?php echo esc_html(lago_home_field('lp_home_documentation_title', 'How this site was built')); ?></h2>
 	</div>
 	<p><?php echo esc_html(lago_home_field('lp_home_documentation_body', 'A dedicated documentation page explains the architecture, evidence, key files, admin workflow and cache/runtime strategy. The content is editable in the classic editor while the layout stays in the theme.')); ?></p>
-	<a class="button primary" href="<?php echo esc_url(home_url('/documentation/')); ?>">Open Documentation</a>
+	<a class="button primary" href="<?php echo esc_url(lago_home_field('lp_home_documentation_button_url', home_url('/documentation/'))); ?>"><?php echo esc_html(lago_home_field('lp_home_documentation_button_label', 'Open Documentation')); ?></a>
 </section>
 
 <section class="scheduler-band">
 	<div>
-		<p class="eyebrow">Next Step</p>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_scheduler_eyebrow', 'Next Step')); ?></p>
 		<h2><?php echo esc_html(lago_home_field('lp_home_scheduler_title', 'Schedule the next conversation')); ?></h2>
 		<p><?php echo esc_html(lago_home_field('lp_home_scheduler_body', 'Use the scheduling page to book a follow-up and review the WordPress build, integrations, code evidence and project access together.')); ?></p>
 	</div>
-	<a class="button primary" href="<?php echo esc_url(lago_home_field('lp_home_scheduler_url', 'https://app.fusioncore.com.br/public/agendador')); ?>" target="_blank" rel="noopener">Open Scheduler</a>
+	<a class="button primary" href="<?php echo esc_url(lago_home_field('lp_home_scheduler_url', 'https://app.fusioncore.com.br/public/agendador')); ?>" target="_blank" rel="noopener"><?php echo esc_html(lago_home_field('lp_home_scheduler_button_label', 'Open Scheduler')); ?></a>
 </section>
 
 <section id="projects" class="projects-section">
 	<div class="section-heading">
-		<p class="eyebrow">Selected work from this server</p>
-		<h2>Each card is a real custom post type with custom fields.</h2>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_projects_eyebrow', 'Selected work from this server')); ?></p>
+		<h2><?php echo esc_html(lago_home_field('lp_home_projects_title', 'Each card is a real custom post type with custom fields.')); ?></h2>
 	</div>
 	<div class="project-grid">
 		<?php if ($project_query->have_posts()) : ?>
@@ -134,13 +142,13 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 			<?php endwhile; wp_reset_postdata(); ?>
 		<?php endif; ?>
 	</div>
-	<p class="section-link"><a class="button ghost" href="<?php echo esc_url(home_url('/projects/')); ?>">Open full project index</a></p>
+	<p class="section-link"><a class="button ghost" href="<?php echo esc_url(home_url('/projects/')); ?>"><?php echo esc_html(lago_home_field('lp_home_projects_button_label', 'Open full project index')); ?></a></p>
 </section>
 
 <section id="brands" class="brands-section">
 	<div class="section-heading">
-		<p class="eyebrow">Served Brands</p>
-		<h2>Hotels and hospitality operations in Lucas Bacellar's project ecosystem.</h2>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_brands_eyebrow', 'Served Brands')); ?></p>
+		<h2><?php echo esc_html(lago_home_field('lp_home_brands_title', 'Hotels and hospitality operations in Lucas Bacellar\'s project ecosystem.')); ?></h2>
 	</div>
 	<div class="brand-grid">
 		<?php if ($brand_query->have_posts()) : ?>
@@ -157,12 +165,12 @@ $highlight_blocks = lago_decode_json_blocks(lago_home_field('lp_home_highlights_
 			<?php endwhile; wp_reset_postdata(); ?>
 		<?php endif; ?>
 	</div>
-	<p class="section-link"><a class="button ghost" href="<?php echo esc_url(home_url('/brands/')); ?>">Open served brands page</a></p>
+	<p class="section-link"><a class="button ghost" href="<?php echo esc_url(home_url('/brands/')); ?>"><?php echo esc_html(lago_home_field('lp_home_brands_button_label', 'Open served brands page')); ?></a></p>
 </section>
 
 <section class="systems-section">
 	<div class="systems-copy">
-		<p class="eyebrow">Lucas Bacellar Highlights</p>
+		<p class="eyebrow"><?php echo esc_html(lago_home_field('lp_home_highlights_eyebrow', 'Lucas Bacellar Highlights')); ?></p>
 		<h2><?php echo esc_html(lago_home_field('lp_home_highlights_title', 'WordPress, marketing systems and integrations with product thinking.')); ?></h2>
 	</div>
 	<div class="systems-list">

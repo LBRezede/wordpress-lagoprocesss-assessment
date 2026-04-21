@@ -54,7 +54,7 @@ function lago_seo_description(): string {
 		}
 	}
 
-	return 'Lucas Bacellar portfolio and showcase for custom WordPress development, marketing systems, hospitality platforms, integrations, Docker versioning and automation workflows.';
+	return lago_site_setting('lp_default_seo_description', 'Lucas Bacellar portfolio and showcase for custom WordPress development, marketing systems, hospitality platforms, integrations, Docker versioning and automation workflows.');
 }
 
 function lago_canonical_url(): string {
@@ -83,7 +83,8 @@ add_action('wp_head', function (): void {
 	$title = wp_get_document_title();
 	$description = lago_seo_description();
 	$canonical = lago_canonical_url();
-	$image = get_theme_file_uri('assets/img/hero-showcase.webp');
+	$image = lago_default_social_image();
+	$knows_about = lago_decode_json_blocks(lago_site_setting('lp_schema_knows_about_json'), ['WordPress', 'Elementor Pro', 'ACF', 'Zapier', 'CRM integrations', 'OpenAI workflows', 'Hospitality systems']);
 	?>
 	<link rel="preload" as="image" href="<?php echo esc_url($image); ?>" imagesrcset="<?php echo esc_url($image); ?> 1536w" imagesizes="(max-width: 920px) 100vw, 61vw" fetchpriority="high">
 	<meta name="description" content="<?php echo esc_attr($description); ?>">
@@ -100,10 +101,10 @@ add_action('wp_head', function (): void {
 	<script type="application/ld+json"><?php echo wp_json_encode([
 		'@context' => 'https://schema.org',
 		'@type' => 'Person',
-		'name' => 'Lucas Bacellar',
+		'name' => lago_site_setting('lp_schema_person_name', 'Lucas Bacellar'),
 		'url' => home_url('/'),
-		'jobTitle' => 'WordPress Developer',
-		'knowsAbout' => ['WordPress', 'Elementor Pro', 'ACF', 'Zapier', 'CRM integrations', 'OpenAI workflows', 'Hospitality systems'],
+		'jobTitle' => lago_site_setting('lp_schema_job_title', 'WordPress Developer'),
+		'knowsAbout' => $knows_about,
 	], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
 	<?php
 }, 1);
@@ -154,6 +155,36 @@ function lago_field(string $key, ?int $post_id = null): string {
 	}
 
 	return '';
+}
+
+function lago_site_setting(string $key, string $fallback = ''): string {
+	if (function_exists('lp_get_option')) {
+		return lp_get_option($key, $fallback);
+	}
+
+	return $fallback;
+}
+
+function lago_page_field(string $key, string $fallback = ''): string {
+	$value = (string) get_post_meta((int) get_the_ID(), $key, true);
+	return $value !== '' ? $value : $fallback;
+}
+
+function lago_default_social_image(): string {
+	$custom = lago_site_setting('lp_default_social_image_url');
+	if ($custom !== '') {
+		return $custom;
+	}
+
+	$front_page_id = (int) get_option('page_on_front');
+	if ($front_page_id > 0 && has_post_thumbnail($front_page_id)) {
+		$image = get_the_post_thumbnail_url($front_page_id, 'full');
+		if (is_string($image) && $image !== '') {
+			return $image;
+		}
+	}
+
+	return get_theme_file_uri('assets/img/hero-showcase.webp');
 }
 
 function lago_field_lines(string $key, ?int $post_id = null): array {
