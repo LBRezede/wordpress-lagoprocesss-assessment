@@ -1,17 +1,6 @@
 <?php
 declare(strict_types=1);
 
-function lago_plugin_code_read(string $relative_path): string {
-	$base = WP_CONTENT_DIR;
-	$full_path = wp_normalize_path($base . '/' . ltrim($relative_path, '/'));
-
-	if (!str_starts_with($full_path, wp_normalize_path($base)) || !is_file($full_path)) {
-		return 'File not found.';
-	}
-
-	return (string) file_get_contents($full_path);
-}
-
 function lago_plugin_code_field(string $key, string $fallback = ''): string {
 	$value = (string) get_post_meta(get_the_ID(), $key, true);
 	return $value !== '' ? $value : $fallback;
@@ -27,21 +16,89 @@ function lago_plugin_code_blocks(string $key, array $fallback = []): array {
 	return is_array($decoded) ? $decoded : $fallback;
 }
 
+$default_toolkit_code = <<<'PHP'
+<?php
+declare(strict_types=1);
+
+add_filter('use_block_editor_for_post', '__return_false', 100);
+add_filter('use_block_editor_for_post_type', '__return_false', 100);
+
+function lp_project_types(): array {
+    return [
+        'lp_delivery' => ['singular' => 'Delivery Project', 'slug' => 'delivery'],
+        'lp_app' => ['singular' => 'App Project', 'slug' => 'apps'],
+        'lp_pms' => ['singular' => 'PMS Project', 'slug' => 'pms'],
+        'lp_crm' => ['singular' => 'CRM Project', 'slug' => 'crm'],
+        'lp_fusion_ai' => ['singular' => 'Fusion AI Project', 'slug' => 'fusion-ai'],
+    ];
+}
+
+function lp_plugin_code_fields(): array {
+    return [
+        'lp_plugin_code_summary_cards' => ['label' => 'Summary cards JSON', 'type' => 'textarea'],
+        'lp_plugin_code_api_code' => ['label' => 'API example code', 'type' => 'textarea'],
+        'lp_plugin_code_files' => ['label' => 'Code panels JSON', 'type' => 'textarea'],
+    ];
+}
+PHP;
+
+$default_runtime_code = <<<'PHP'
+<?php
+declare(strict_types=1);
+
+add_action('template_redirect', static function (): void {
+    if (is_admin() || wp_doing_ajax()) {
+        return;
+    }
+
+    header_remove('X-Pingback');
+}, 1);
+
+add_filter('script_loader_tag', static function (string $tag, string $handle): string {
+    $delayed = ['google-analytics', 'gtag', 'facebook-pixel'];
+    if (!in_array($handle, $delayed, true)) {
+        return $tag;
+    }
+
+    return str_replace('<script ', '<script data-lago-delay="1" ', $tag);
+}, 10, 2);
+PHP;
+
+$default_cache_code = <<<'PHP'
+<?php
+declare(strict_types=1);
+
+function lago_page_cache_should_bypass(): bool {
+    if (is_user_logged_in() || wp_doing_ajax()) {
+        return true;
+    }
+
+    return $_SERVER['REQUEST_METHOD'] !== 'GET';
+}
+
+add_action('save_post', static function (): void {
+    lago_page_cache_purge_all();
+});
+PHP;
+
 $plugin_files = lago_plugin_code_blocks('lp_plugin_code_files', [
 	[
+		'eyebrow' => 'plugins/lago-process-toolkit/lagoprocess-toolkit.php',
 		'title' => 'Lago Process Toolkit Plugin',
-		'path' => 'plugins/lago-process-toolkit/lagoprocess-toolkit.php',
-		'description' => 'Registers portfolio custom post types, admin menu entries, ACF-like fields, classic editor behavior, REST fields and the editable homepage field layer.',
+		'description' => 'Registers portfolio custom post types, admin menu entries, ACF-like fields, classic editor behavior, REST fields and the editable page field layers.',
+		'code' => $default_toolkit_code,
 	],
 	[
+		'eyebrow' => 'mu-plugins/lago-runtime-optimization.php',
 		'title' => 'Lago Runtime Optimization MU Plugin',
-		'path' => 'mu-plugins/lago-runtime-optimization.php',
 		'description' => 'Runs automatically as a must-use plugin and handles conservative performance optimizations, delayed trackers, image dimensions, sitemap output and vendor request hardening.',
+		'code' => $default_runtime_code,
 	],
 	[
+		'eyebrow' => 'mu-plugins/lago-page-cache.php',
 		'title' => 'Lago Page Cache MU Plugin',
-		'path' => 'mu-plugins/lago-page-cache.php',
 		'description' => 'Runs automatically as a must-use plugin and provides a small full-page cache for anonymous visitors with safe bypass and invalidation rules.',
+		'code' => $default_cache_code,
 	],
 ]);
 
@@ -134,13 +191,14 @@ get_header();
 		</section>
 
 		<?php foreach ($plugin_files as $file) : ?>
+			<?php if (!is_array($file)) { continue; } ?>
 			<section class="code-file-panel">
 				<div class="code-file-intro">
-					<p class="eyebrow"><?php echo esc_html($file['path']); ?></p>
-					<h2><?php echo esc_html($file['title']); ?></h2>
-					<p><?php echo esc_html($file['description']); ?></p>
+					<p class="eyebrow"><?php echo esc_html((string) ($file['eyebrow'] ?? 'Code panel')); ?></p>
+					<h2><?php echo esc_html((string) ($file['title'] ?? 'Code example')); ?></h2>
+					<p><?php echo esc_html((string) ($file['description'] ?? '')); ?></p>
 				</div>
-				<pre><code><?php echo esc_html(lago_plugin_code_read((string) $file['path'])); ?></code></pre>
+				<pre><code><?php echo esc_html((string) ($file['code'] ?? 'Code not provided.')); ?></code></pre>
 			</section>
 		<?php endforeach; ?>
 	</article>

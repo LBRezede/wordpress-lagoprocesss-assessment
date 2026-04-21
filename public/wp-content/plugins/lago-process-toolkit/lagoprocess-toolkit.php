@@ -223,7 +223,7 @@ function lp_plugin_code_fields(): array {
 		'lp_plugin_code_api_title'     => ['label' => 'API section title', 'type' => 'text'],
 		'lp_plugin_code_api_body'      => ['label' => 'API section body', 'type' => 'textarea'],
 		'lp_plugin_code_api_code'      => ['label' => 'API example code', 'type' => 'textarea'],
-		'lp_plugin_code_files'         => ['label' => 'Code files JSON', 'type' => 'textarea'],
+		'lp_plugin_code_files'         => ['label' => 'Code panels JSON', 'type' => 'textarea'],
 	];
 }
 
@@ -402,9 +402,9 @@ function lp_render_plugin_code_fields_box(WP_Post $post): void {
 	wp_nonce_field('lp_save_plugin_code_fields', 'lp_plugin_code_fields_nonce');
 	?>
 	<div class="lp-fields">
-		<p>Edit the code-page summary cards, API example text, sample code and the visible file registry here. File contents are still loaded live from the paths below.</p>
+		<p>Edit the code-page summary cards, API example text, sample code and every visible code panel here. Nothing on this page needs to be loaded live from the server anymore.</p>
 		<p>Example summary cards JSON: <code>[{"label":"Toolkit","value":"CPTs, fields, REST"}]</code></p>
-		<p>Example files JSON: <code>[{"title":"Lago Process Toolkit Plugin","path":"plugins/lago-process-toolkit/lagoprocess-toolkit.php","description":"Registers CPTs and fields."}]</code></p>
+		<p>Example panels JSON: <code>[{"eyebrow":"plugins/lago-process-toolkit/lagoprocess-toolkit.php","title":"Lago Process Toolkit Plugin","description":"Registers CPTs and fields.","code":"&lt;?php\nregister_post_type('lp_app', [...]);"}]</code></p>
 		<?php foreach (lp_plugin_code_fields() as $key => $field) :
 			$value = (string) get_post_meta($post->ID, $key, true);
 			$is_large = str_contains($key, 'json') || str_contains($key, '_code') || $key === 'lp_plugin_code_files' || $key === 'lp_plugin_code_summary_cards';
@@ -534,6 +534,11 @@ add_action('save_post', function (int $post_id): void {
 			}
 
 			$value = wp_unslash($_POST[$key]);
+			if (in_array($key, ['lp_plugin_code_api_code', 'lp_plugin_code_files'], true)) {
+				update_post_meta($post_id, $key, (string) $value);
+				continue;
+			}
+
 			update_post_meta($post_id, $key, sanitize_textarea_field((string) $value));
 		}
 	}
